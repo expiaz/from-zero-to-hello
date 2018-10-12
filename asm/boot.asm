@@ -18,6 +18,7 @@ jmp $
 
 %include "asm/gdt.asm"
 %include "asm/print_string.asm"
+%include "asm/print_hex.asm"
 %include "asm/disk_load.asm"
 %include "asm/pm.asm"
 %include "asm/putstr.asm"

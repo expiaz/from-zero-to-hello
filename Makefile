@@ -1,3 +1,17 @@
+# $@ = target file
+# $< = first dependency
+# $^ = all dependencies
+#
+# dependency : file or rule name
+# rulename: file or ascii name
+# command: shell command
+# ----------------------------------
+# rulename: dependency1 dependency2
+# 	command
+# $@ => rulename
+# $< => dependency1
+# $^ => dependency1 dependency2
+
 ASM = ./asm
 
 C = ./c
@@ -20,6 +34,3 @@ concat:
 
 emul:
 	qemu-system-i386 $(OUT)/os.img
-
-link:
-	ld -o basic.bin -Ttext 0x0 --oformat binary basic.o
