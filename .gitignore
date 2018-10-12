@@ -1,5 +1,6 @@
 *.bin
 *.o
 *.dis
+*.img
 .vscode
 out/*

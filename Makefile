@@ -12,25 +12,32 @@
 # $< => dependency1
 # $^ => dependency1 dependency2
 
-ASM = ./asm
+all: emul
 
-C = ./c
+boot.bin: boot.asm
+	nasm $< -f bin -o $@
 
-OUT = ./out
+kernel_entry.o: kernel_entry.asm
+	nasm $< -f elf -o $@
 
-all: compile kernel concat emul
+kernel.o: kernel.c
+	i386-elf-gcc -ffreestanding -c $< -o $@
 
-compile:
-	nasm $(ASM)/boot.asm -f bin -o $(OUT)/boot.bin
-	
-kernel:
-	nasm $(ASM)/kernel_entry.asm -f elf -o $(OUT)/kernel_entry.o
-	i386-elf-gcc -ffreestanding -c $(C)/kernel.c -o $(OUT)/kernel.o
-	i386-elf-ld -o $(OUT)/kernel.bin -Ttext 0x1000 $(OUT)/kernel_entry.o $(OUT)/kernel.o --oformat binary
-	rm $(OUT)/kernel.o $(OUT)/kernel_entry.o
+kernel.bin: kernel_entry.o kernel.o
+	i386-elf-ld -o $@ -Ttext 0x1000 $^ --oformat binary
 
-concat:
-	cat $(OUT)/boot.bin $(OUT)/kernel.bin > $(OUT)/os.img
+os.img: boot.bin kernel.bin
+	cat $^ > $@
 
-emul:
-	qemu-system-i386 $(OUT)/os.img
+os.dis: os.img
+	ndisasm -b 32 $< > $@
+	$(fclean)
+
+clean:
+	rm *.o *.bin
+
+fclean: clean
+	rm os.img os.dis
+
+emul: os.img clean
+	qemu-system-i386 os.img

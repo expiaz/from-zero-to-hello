@@ -1,0 +1,58 @@
+---------- MAKEFILE ---------------
+
+# $@ = target file
+# $< = first dependency
+# $^ = all dependencies
+#
+# dependency : file or rule name
+# rulename: file or ascii name
+# command: shell command
+# ----------------------------------
+# rulename: dependency1 dependency2
+# 	command
+# $@ => rulename
+# $< => dependency1
+# $^ => dependency1 dependency2
+
+---------- C calling -------------
+
+call func
+    push ip+1
+    jmp func
+
+ret
+    pop return
+    jmp return
+
+leave
+    mov esp, ebp
+    pop ebp
+
+enter
+    push ebp
+    mov ebp, esp
+
+convention:
+
+call func
+enter
+body
+leave
+ret
+
+--caller
+push ip+1
+jmp func
+--callee
+push ebp
+mov ebp, esp
+sub esp, 0x4
+--body local
+mov [ebp-0x4], 0x5
+--ret value
+mov eax, [ebp-0x4]
+mov esp, ebp
+pop ebp
+pop ebx
+jmp ebx
+--caller
