@@ -56,3 +56,11 @@ pop ebp
 pop ebx
 jmp ebx
 --caller
+
+----------------- GAS ---------------------
+? = a,b,c,d
+=? (name) => put ? register in variable 'name' after the operation
+? (name) => load ? register with 'name' before the operation
+
+__asm__("assembly" : return : parameters)
+__asm__("mov %%from, %%to" : "=to" (var) : "from" (var))

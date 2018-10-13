@@ -2,42 +2,58 @@
 # $< = first dependency
 # $^ = all dependencies
 #
-# dependency : file or rule name
-# rulename: file or ascii name
+# dependency : target or phoney
+# target: target (file) or phoney (name)
 # command: shell command
 # ----------------------------------
-# rulename: dependency1 dependency2
+# target: dependency1 dependency2
 # 	command
-# $@ => rulename
+# $@ => target
 # $< => dependency1
 # $^ => dependency1 dependency2
 
-all: emul
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h)
 
-boot.bin: boot.asm
-	nasm $< -f bin -o $@
+OBJ = ${C_SOURCES:.c=.o}
 
-kernel_entry.o: kernel_entry.asm
-	nasm $< -f elf -o $@
+CC = /usr/local/i386elfgcc/bin/i386-elf-gcc
+LD = /usr/local/i386elfgcc/bin/i386-elf-ld
+GDB = /usr/local/i386elfgcc/bin/i386-elf-gdb
 
-kernel.o: kernel.c
-	i386-elf-gcc -ffreestanding -c $< -o $@
+CFLAGS = -g
 
-kernel.bin: kernel_entry.o kernel.o
-	i386-elf-ld -o $@ -Ttext 0x1000 $^ --oformat binary
+KERNEL = kernel
+BOOT = boot
+DRIVER = drivers
 
-os.img: boot.bin kernel.bin
+all: os.img
+
+run: os.img
+	qemu-system-i386 os.img
+
+debug: os.img kernel.elf
+	qemu-system-i386 -s -S os.img &
+	${GDB} -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
+
+os.img: ${BOOT}/boot.bin kernel.bin
 	cat $^ > $@
 
-os.dis: os.img
-	ndisasm -b 32 $< > $@
-	$(fclean)
+kernel.bin: ${BOOT}/kernel_entry.o ${OBJ}
+	${LD} -o $@ -Ttext 0x1000 $^ --oformat binary
+
+kernel.elf: ${BOOT}/kernel_entry.o ${OBJ}
+	${LD} -o $@ -Ttext 0x1000 $^
+
+%.o: %.c ${HEADERS}
+	${CC} ${CFLAGS} -ffreestanding -c $< -o $@
+
+%.o: %.asm
+	nasm $< -f elf -o $@
+
+%.bin: %.asm
+	nasm $< -f bin -I 'boot/' -o $@
 
 clean:
-	rm *.o *.bin
-
-fclean: clean
-	rm os.img os.dis
-
-emul: os.img clean
-	qemu-system-i386 os.img
+	rm -rf *.bin *.dis *.o os.img *.elf
+	rm -rf ${KERNEL}/*.o ${BOOT}/*.bin ${DRIVER}/*.o ${BOOT}/*.o
