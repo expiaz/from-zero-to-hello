@@ -6,7 +6,7 @@
 #define SCREEN_ROWS 25
 #define SCREEN_COLS 80
 
-typedef enum vga_color_e {
+typedef enum text_color_e {
     BLACK = 0x0,
     BLUE = 0x1,
     GREEN = 0x2,
@@ -15,18 +15,16 @@ typedef enum vga_color_e {
     MAGENTA = 0x5,
     BROWN = 0x6,
     WHITE = 0xf
-} vga_color;
-
-#define WHITE_ON_BLACK 
+} text_color;
 
 #define REG_SCREEN_CTRL 0x3D4
 #define REG_SCREEN_DATA 0x3D5
 
-void    init_screen(int x, int y, vga_color foreground, vga_color background);
+void    init_screen(int x, int y, text_color foreground, text_color background);
 
 void    putchar(char c);
 void    putstr(char *s);
-void    color(vga_color foreground, vga_color background);
+void    color(text_color foreground, text_color background);
 void    clear();
 
 #endif

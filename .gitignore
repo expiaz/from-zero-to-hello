@@ -2,5 +2,6 @@
 *.o
 *.dis
 *.img
+*.elf
 .vscode
 out/*

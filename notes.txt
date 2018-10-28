@@ -24,11 +24,11 @@ ret
     pop return
     jmp return
 
-leave
+leave                   delete local variables
     mov esp, ebp
     pop ebp
 
-enter
+enter                   create new stack frame (backup old one before)
     push ebp
     mov ebp, esp
 
@@ -64,3 +64,4 @@ jmp ebx
 
 __asm__("assembly" : return : parameters)
 __asm__("mov %%from, %%to" : "=to" (var) : "from" (var))
+__asm__("mov %%a, %%b" : "=b" (b) : "a" (a))

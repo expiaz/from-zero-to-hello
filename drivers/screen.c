@@ -9,18 +9,23 @@ u16      attribute;
 void    move_cursor();
 void    scroll();
 
-void    init_screen(int x, int y, vga_color foreground, vga_color background) {
+void    init_screen(int x, int y, text_color foreground, text_color background) {
     cursor_x = 0;
     cursor_y = 0;
     video_memory = (u16 *) VIDEO_ADDRESS;
     color(foreground, background);
 }
 
-void    color(vga_color foreground, vga_color background) {
+void    color(text_color foreground, text_color background) {
+    /*
     u8      attribute_byte;
     
     attribute_byte = (background << 4) | (foreground & 0x0f);
     attribute = attribute_byte << 8;
+    */
+   // upper 4 bits are the background color code, lower 4 are the foreground one
+   // all in 8 bits
+    attribute = ((background << 4) | (foreground & 0x0f)) << 8;
 }
 
 void    putchar(char c) {
@@ -46,7 +51,10 @@ void    putchar(char c) {
     }
     // printable characters
     else if (c >= ' ') {
+        // compute the position from the x and y indexs
         location = video_memory + (cursor_y * SCREEN_COLS + cursor_x);
+        // 8 bits for the character code (0-7), 8 for the attribute (8-15)
+        // total of 16bits per char
         *location = c | attribute;
         cursor_x++;
     }
@@ -72,14 +80,15 @@ void    putstr(char *s) {
 }
 
 void    clear() {
-    u16     blank;
+    //u16     blank;
     int     i;
 
     // prepare the attribute for color
-    blank = ((BLACK << 4) | (WHITE & 0x0f)) << 8;
+    color(WHITE, BLACK);
+    //blank = ((BLACK << 4) | (WHITE & 0x0f)) << 8;
     // write blank chars everywhere
     for (i = 0; i < SCREEN_ROWS * SCREEN_COLS; i++)
-        video_memory[i] = ' ' | blank;
+        video_memory[i] = ' ' | attribute;
 
     cursor_y = 0;
     cursor_x = 0;
@@ -87,21 +96,26 @@ void    clear() {
 }
 
 void    scroll() {
-    u16     blank;
+    //u16     blank;
     int     i;
 
     // scroll only if end of screen
-    if (cursor_y < SCREEN_COLS)
+    if (cursor_y < SCREEN_ROWS)
         return;
+
     // move on row higher every char on the screen, the first row is lost
     for (i = 0; i < (SCREEN_ROWS - 1) * SCREEN_COLS; i++)
         video_memory[i] = video_memory[i + SCREEN_COLS];
     
     // prepare the attribute for color
-    blank = ((BLACK << 4) | (WHITE & 0x0f)) << 8;
+    color(WHITE, BLACK);
+    //blank = ((BLACK << 4) | (WHITE & 0x0f)) << 8;
     // empty the last line
     for (i = (SCREEN_ROWS - 1) * SCREEN_COLS; i < SCREEN_ROWS * SCREEN_COLS; i++)
-        video_memory[i] = ' ' | blank;
+        video_memory[i] = ' ' | attribute;
+
+    // update the cursor y index to the line before
+    cursor_y--;
 }
 
 void    get_cursor() {
