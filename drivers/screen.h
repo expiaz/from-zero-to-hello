@@ -27,4 +27,12 @@ void    putstr(char *s);
 void    color(text_color foreground, text_color background);
 void    clear();
 
+#define DECIMAL "0123456789"
+#define HEXA    "0123456789ABCDEF"
+
+int     is_printable(char c);
+void    putnbr(int nb);
+void    puthexa(int nb);
+void    putnbr_base(int nb, char *base);
+
 #endif

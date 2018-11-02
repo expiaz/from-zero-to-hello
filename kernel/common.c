@@ -54,3 +54,8 @@ void memcpy(s8 *src, s8 *dest, int bytes) {
         i++;
     }
 }
+
+void memset(s8 *src, u8 value, int size) {
+    int i = 0;
+    while (i < size) src[i++] = value;
+}

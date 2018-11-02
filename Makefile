@@ -15,13 +15,14 @@
 C_SOURCES = $(wildcard kernel/*.c drivers/*.c)
 HEADERS = $(wildcard kernel/*.h drivers/*.h)
 
-OBJ = ${C_SOURCES:.c=.o}
+OBJ = ${C_SOURCES:.c=.o boot/idt.o}
 
 CC = /usr/local/i386elfgcc/bin/i386-elf-gcc
 LD = /usr/local/i386elfgcc/bin/i386-elf-ld
 GDB = /usr/local/i386elfgcc/bin/i386-elf-gdb
 
 CFLAGS = -g
+QFLAGS = -fda #use -hda for hard drive image is size >= 3kb
 
 KERNEL = kernel
 BOOT = boot
@@ -30,7 +31,7 @@ DRIVER = drivers
 all: os.img
 
 run: os.img
-	qemu-system-i386 os.img
+	qemu-system-i386 ${QFLAGS} os.img
 
 debug: os.img kernel.elf
 	qemu-system-i386 -s -S os.img &

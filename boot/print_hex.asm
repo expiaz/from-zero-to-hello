@@ -1,3 +1,5 @@
+[bits 16]
+
 print_hex:
     pusha
     mov bx, 5       ;go to the last index of string HEX_OUT
@@ -30,7 +32,7 @@ print_hex:
     jne .loop
 
     ;print the whole number
-    mov bx, HEX_OUT
+    mov si, HEX_OUT
     call print_string
 
     popa

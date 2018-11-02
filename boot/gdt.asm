@@ -1,3 +1,5 @@
+[bits 16]
+
 ; GDT
 gdt_start:
 
@@ -26,6 +28,24 @@ gdt_data:           ; the data segment descriptor
     db 11001111b    ; 2nd flags , Limit ( bits 16 -19)
     db 0x0          ; Base ( bits 24 -31)
 
+gdt_user_code:
+
+	dw 0xffff
+	dw 0x0
+	db 0x0
+	db 11111010b	; ring 3 code segment
+	db 11001111b
+	db 0x0
+
+gdt_user_data:
+
+	dw 0xffff
+	dw 0x0
+	db 0x0
+	db 11110010b
+	db 11001111b
+	db 0x0
+
 gdt_end:            ; The reason for putting a label at the end of the
                     ; GDT is so we can have the assembler calculate
                     ; the size of the GDT for the GDT decriptor ( below )
@@ -43,3 +63,6 @@ gdt_descriptor:
 ; case is the DATA segment (0 x0 -> NULL ; 0x08 -> CODE ; 0 x10 -> DATA )
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
+
+CODE_USER_SEG equ gdt_user_code - gdt_start
+DATA_USER_SEG equ gdt_user_data - gdt_start

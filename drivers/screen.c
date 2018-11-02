@@ -79,6 +79,53 @@ void    putstr(char *s) {
         putchar(s[i++]);
 }
 
+int is_printable(char c) {
+    return (c > 31 && c < 127);
+}
+
+void putnbr(int nb) {
+    putnbr_base(nb, DECIMAL);
+}
+
+void puthexa(int nb) {
+    putnbr_base(nb, HEXA);
+}
+
+void __putnbr_base(int nb, char *base, int size)
+{
+    int     next;
+    int     rest;
+    char    c;
+
+    next = nb / 10;
+    rest = nb % 10;
+    // bypass overflows
+    if (rest < 0)
+        rest = -rest;
+    c = base[rest];
+    if (next != 0)
+        __putnbr_base(next, base, size);
+    putchar(c);
+}
+
+void putnbr_base(int nb, char *base)
+{
+    int     size;
+
+    size = 0;
+    while (base[size])
+    {
+        if (!is_printable(base[size]))
+            return;
+        size++;
+    }
+    if (size) {
+        if (nb < 0)
+            putchar('-');
+        __putnbr_base(nb, base, size);
+    }
+}
+
 void    clear() {
     //u16     blank;
     int     i;
