@@ -17,7 +17,6 @@ void main() {
     set_idt();
     putstr("IDT loaded\n");
 
-    //__asm__ ("int $3");
     __asm__("int $3");
     //int a = 4 / 0;
 }

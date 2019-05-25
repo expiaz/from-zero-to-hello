@@ -5,3 +5,4 @@
 *.elf
 .vscode
 out/*
+.DS_Store
