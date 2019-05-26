@@ -16,7 +16,7 @@
 
 # qemu mouse => crtl+alt+g
 
-C_SOURCES = $(wildcard kernel/*.c kernel/*.s drivers/*.c)
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c)
 HEADERS = $(wildcard kernel/*.h drivers/*.h)
 
 KERNEL = kernel
@@ -24,7 +24,7 @@ BOOT = boot
 OUT = out
 DRIVER = drivers
 
-OBJ = ${C_SOURCES:.c=.o} ${C_SOURCES:.s=.o}
+OBJ = ${C_SOURCES:.c=.o kernel/interrupt.o}
 
 CC = /usr/local/i386elfgcc/bin/i386-elf-gcc
 LD = /usr/local/i386elfgcc/bin/i386-elf-ld

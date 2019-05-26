@@ -81,7 +81,7 @@ void set_isr() {
     exception_messages[31] = "Reserved";
 
     IRQ_names[0] = "Programmable Interrupt Timer Interrupt";
-    IRQ_names[1] = "KeyboardInterrupt";
+    IRQ_names[1] = "Keyboard Interrupt";
     IRQ_names[2] = "Cascade (used internally by the two PICs. never raised)";
     IRQ_names[3] = "COM2 (if enabled)";
     IRQ_names[4] = "COM1 (if enabled)";
@@ -124,21 +124,23 @@ void isr_handler(registers_t regs) {
  * 
  */
 void irq_handler(registers_t regs) {
-    // sent by slave PIC
-    if (regs.int_no > 0x28) {
-        outb(PIC_slave_control_port, PIC_EOI);
-    }
-    // Send reset signal to master
-    outb(PIC_master_control_port, PIC_EOI);
-
+    /*
     putstr("Received IRQ ");
     putnbr(regs.int_no);
     putstr(" : ");
-    putstr(IRQ_names[regs.int_no]);
+    putstr(IRQ_names[regs.int_no - 32]);
+    putstr("\n");
+    */
 
-    if (regs.int_no < 256 && interrupt_handlers[regs.int_no] != 0)
-    {
+    if (regs.int_no < 256 && interrupt_handlers[regs.int_no] != 0) {
         isr_t handler = interrupt_handlers[regs.int_no];
         handler(regs);
+    }
+    // EOI
+    // Send reset signal to master
+    outb(PIC1_COMMAND, PIC_EOI);
+    // sent by slave PIC
+    if (regs.int_no >= 0x28) {
+        outb(PIC2_COMMAND, PIC_EOI);
     }
 }

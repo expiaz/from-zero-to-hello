@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "../drivers/screen.h"
-#include "PIC.h"
+#include "../drivers/PIC.h"
 
 // CPU exceptions
 // @see kernel/interrupt.s

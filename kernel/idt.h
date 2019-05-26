@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "isr.h"
-#include "PIC.h"
+#include "../drivers/PIC.h"
 
 typedef struct {
     /**

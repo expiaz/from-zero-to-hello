@@ -82,7 +82,7 @@ ISR_NOERRCODE	31	; Reserved
 ; This macro creates a stub for an IRQ - the first parameter is
 ; the IRQ number, the second is the ISR number it is remapped to.
 %macro IRQ 2
-  global irq%1
+  [global irq%1]
   irq%1:
     cli
     push 0
@@ -101,7 +101,7 @@ irq_common_stub:
 	mov fs, ax
 	mov gs, ax
 
-	call isr_handler ; call C handler
+	call irq_handler ; call C handler
 
 	; restore state
 	pop eax

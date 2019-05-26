@@ -28,13 +28,31 @@ void    color(text_color foreground, text_color background) {
     attribute = ((background << 4) | (foreground & 0x0f)) << 8;
 }
 
+// 0x3954
+// 0011 1001 0101 0100
+
+// 0x3872
+
+
 void    putchar(char c) {
     u16     *location;
     
     // backspace
     if (c == 0x08 && cursor_x > 0) {
         cursor_x--;
-    } 
+        putchar(' ');
+        cursor_x--;
+    }
+    // backspace on carriage return
+    else if (c == 0x08 && cursor_y > 0) {
+        cursor_y--;
+        /*cursor_x = 80;
+        while (
+            --cursor_x &&
+            ! *(location = video_memory + (cursor_y * SCREEN_COLS + cursor_x))
+        );
+        */
+    }
     // tab
     else if (c == 0x09) {
         cursor_x += 8 - cursor_x % 8;

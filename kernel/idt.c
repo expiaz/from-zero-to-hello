@@ -60,7 +60,7 @@ void set_idt() {
     // remap slave IRQs 8-15
     // from 0x70 - 0x77
     // to 0x28 - 0x2F
-    remap_PIC(0x20, 0x28);
+    PIC_remap(0x20, 0x28);
 
     // master PIC
     set_idt_entry(32, (u32)irq0);
@@ -82,4 +82,7 @@ void set_idt() {
     set_idt_entry(47, (u32)irq15);
 
     __asm__("lidt (%%eax)" : : "a" (&idt_reg));
+    // we must reenable interrupt now that we have set up
+    // our IDT in protected mode
+    __asm__("sti");
 }
