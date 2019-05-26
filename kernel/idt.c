@@ -15,6 +15,7 @@ void set_idt() {
 
     memset((char *) &idt, 0, IDT_ENTRIES * sizeof(idt_entry_t));
 
+    // CPU fault handlers
     set_idt_entry(0, (u32)isr0);
     set_idt_entry(1, (u32)isr1);
     set_idt_entry(2, (u32)isr2);
@@ -48,7 +49,37 @@ void set_idt() {
     set_idt_entry(30, (u32)isr30);
     set_idt_entry(31, (u32)isr31);
 
+    // setup exceptions messages for CPU faults
+    // bc global init won't work with compiler
     set_isr();
+
+    // remap the PIC
+    // move master IRQs 0-7
+    // from 0x08 - 0x0F
+    // to 0x20 - 0x27
+    // remap slave IRQs 8-15
+    // from 0x70 - 0x77
+    // to 0x28 - 0x2F
+    remap_PIC(0x20, 0x28);
+
+    // master PIC
+    set_idt_entry(32, (u32)irq0);
+    set_idt_entry(33, (u32)irq1);
+    set_idt_entry(34, (u32)irq2);
+    set_idt_entry(35, (u32)irq3);
+    set_idt_entry(36, (u32)irq4);
+    set_idt_entry(37, (u32)irq5);
+    set_idt_entry(38, (u32)irq6);
+    set_idt_entry(39, (u32)irq7);
+    // slave PIC
+    set_idt_entry(40, (u32)irq8);
+    set_idt_entry(41, (u32)irq9);
+    set_idt_entry(42, (u32)irq10);
+    set_idt_entry(43, (u32)irq11);
+    set_idt_entry(44, (u32)irq12);
+    set_idt_entry(45, (u32)irq13);
+    set_idt_entry(46, (u32)irq14);
+    set_idt_entry(47, (u32)irq15);
 
     __asm__("lidt (%%eax)" : : "a" (&idt_reg));
 }

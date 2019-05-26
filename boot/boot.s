@@ -54,7 +54,7 @@ lgdt [gdt_descriptor]   ; Load our global descriptor table , which defines
 mov eax, cr0			; To make the switch to protected mode , we set
 or eax, 0x1			    ; the first bit of CR0 , a control register
 mov cr0, eax
-jmp CODE_SEG:pm	; Make a far jump ( i.e. to a new segment )
+jmp CODE_SEG:pm			; Make a far jump ( i.e. to a new segment )
 						; to our 32 - bit code. This also forces the CPU
 						; to flush its cache of pre - fetched and
 						; real - mode decoded instructions
@@ -74,7 +74,7 @@ mov ebp, 0x90000 	; Update our stack position so it is right
 mov esp, ebp		; at the top of the free space between the boot
 					; loader (0x7e00) and the extended BIOS area (9fc00)
 					; so we'll dispose of 0x0:0x90000 - 0x0:0x7e00
-					; = 557 568 bytes for ou stack
+					; = 557 568 bytes for our stack
 
 mov ebx, MSG_PROTECTED_MODE
 call putstr			; Use our 32 - bit print routine.

@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "isr.h"
+#include "PIC.h"
 
 typedef struct {
     /**
@@ -42,8 +43,10 @@ typedef struct {
     u32 base;
 } __attribute__((packed)) idt_register_t;
 
-#define IDT_ENTRIES 256 // 256 interrupts exists, we'll only define 32 (in which 18 are mapped)
-                        // this is sufficient for the CPU to not crash from NULL handlers
+#define IDT_ENTRIES 256 // 256 interrupts exists, we'll only define 32
+                        // (in which 18 are mapped)
+                        // this is sufficient for the CPU
+                        // to not crash from NULL handlers
 
 #define KERNEL_CS 0x08
 #define IDT_FLAGS 0x8E // 1(P)00(ring 0)0(interrupt)110(32 bits)
