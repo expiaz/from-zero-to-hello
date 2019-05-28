@@ -16,9 +16,10 @@ check_a20:
 
     rol word [ds:0x7dfe], 0x8
     cmp word [es:0x7e0e], 0x55aa
+    jne .disabled
 
     mov ax, 1
-    jne .disabled
+    jmp .return
 
 .disabled:
     mov ax, 0
