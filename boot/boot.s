@@ -34,10 +34,19 @@ sti
 mov si, MSG_REAL_MODE ; do not use EBX for parameter since the BIOS function may use BX to store some
 call print_string
 
+; -------------- enable A20 gate
+call enable_a20
+cmp ax, 1
+je load_kernel
+; couldn't activate a20 gate
+mov si, MSG_A20_FAILED
+call print_string
+jmp $
 
 ; -------------- load the kernel
-mov si, MSG_LOAD_KERNEL
-call print_string
+load_kernel:
+; mov si, MSG_LOAD_KERNEL
+; call print_string
 
 mov bx, KERNEL_ADDR		; address to load kernel
 mov dh, 16				; load first 15 sectors (w/o boot sector)
@@ -89,9 +98,10 @@ call KERNEL_ADDR	; jump to the kernel
 
 jmp $				; hang forever
 
+%include "a20.s"
 %include "gdt.s"
 %include "print_string.s"
-%include "print_hex.s"
+; %include "print_hex.s"
 %include "disk_load.s"
 %include "putstr.s"
 
@@ -109,9 +119,9 @@ KERNEL_ADDR		equ 0x1000 	; kernel will be loaded at ES:0x1000
 							; 0x7e00 + stack size (0x1200 currently)
 							; to have more room (638 KiB free)
 BOOT_DRIVE			db 0
-MSG_REAL_MODE 		db "Started in 16 - bit Real Mode", 13, 10, 0
-MSG_PROTECTED_MODE 	db "Successfully landed in 32 - bit Protected Mode", 0
-MSG_LOAD_KERNEL		db "Loading kernel into memory", 13, 10, 0
+MSG_REAL_MODE 		db "16 bit Real Mode", 13, 10, 0
+MSG_PROTECTED_MODE 	db "32 bit Protected Mode", 0
+MSG_A20_FAILED		db "Can't enable A20", 13, 10, 0
 
 ; Bootsector padding (first 510 bytes)
 times 510-($-$$) db 0

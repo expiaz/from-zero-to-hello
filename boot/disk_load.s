@@ -80,13 +80,13 @@ disk_load:
     mov si, DISK_ERROR_MSG
     call print_string
 
-    mov dh, bh      ; ah = error code, dl = disk drive where error from
-    call print_hex
+    ; mov dh, bh      ; ah = error code, dl = disk drive where error from
+    ; call print_hex
     
     jmp $
 
 REMAINING_SECTORS       db 0
-DISK_ERROR_MSG          db "Disk read error : ", 0
+DISK_ERROR_MSG          db "Disk read error", 0
 RETRY_MSG               db "retry ", 0
 
 ; load DH sectors to ES:BX from drive DL
