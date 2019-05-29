@@ -1,6 +1,6 @@
 #include "isr.h"
 
-char *exception_messages[32]; /* = {
+char *interrupt_names[256]; /* = {
         "Division by zero exception",
         "Debug exception",
         "Non maskable interrupt",
@@ -36,7 +36,7 @@ char *exception_messages[32]; /* = {
     }; */
 
     
-char *IRQ_names[15];
+// char *interrupt_names[15];
 
 isr_t interrupt_handlers[256];
 
@@ -47,55 +47,57 @@ void register_interrupt_handler(u8 number, isr_t handler) {
 void set_isr() {
     memset((char *) &interrupt_handlers, 0, 256 * sizeof(isr_t));
 
-    exception_messages[0] = "Division by zero exception";
-    exception_messages[1] = "Debug exception";
-    exception_messages[2] = "Non maskable interrupt";
-    exception_messages[3] = "Breakpoint exception";
-    exception_messages[4] = "into detected overflow";
-    exception_messages[5] = "Out of bounds exception";
-    exception_messages[6] = "Invalid opcode exception";
-    exception_messages[7] = "No coprocessor exception";
-    exception_messages[8] = "Double fault";
-    exception_messages[9] = "Coprocessor segment overrun";
-    exception_messages[10] = "Bad TSS";
-    exception_messages[11] = "Segment not present";
-    exception_messages[12] = "Stack fault";
-    exception_messages[13] = "General protection fault";
-    exception_messages[14] = "Page fault";
-    exception_messages[15] = "Unknown interrupt exception";
-    exception_messages[16] = "coprocessor fault";
-    exception_messages[17] = "Alignment check exception";
-    exception_messages[18] = "Machine check exception";
-    exception_messages[19] = "Reserved";
-    exception_messages[20] = "Reserved";
-    exception_messages[21] = "Reserved";
-    exception_messages[22] = "Reserved";
-    exception_messages[23] = "Reserved";
-    exception_messages[24] = "Reserved";
-    exception_messages[25] = "Reserved";
-    exception_messages[26] = "Reserved";
-    exception_messages[27] = "Reserved";
-    exception_messages[28] = "Reserved";
-    exception_messages[29] = "Reserved";
-    exception_messages[30] = "Reserved";
-    exception_messages[31] = "Reserved";
+    interrupt_names[0] = "Division by zero exception";
+    interrupt_names[1] = "Debug exception";
+    interrupt_names[2] = "Non maskable interrupt";
+    interrupt_names[3] = "Breakpoint exception";
+    interrupt_names[4] = "into detected overflow";
+    interrupt_names[5] = "Out of bounds exception";
+    interrupt_names[6] = "Invalid opcode exception";
+    interrupt_names[7] = "No coprocessor exception";
+    interrupt_names[8] = "Double fault";
+    interrupt_names[9] = "Coprocessor segment overrun";
+    interrupt_names[10] = "Bad TSS";
+    interrupt_names[11] = "Segment not present";
+    interrupt_names[12] = "Stack fault";
+    interrupt_names[13] = "General protection fault";
+    interrupt_names[14] = "Page fault";
+    interrupt_names[15] = "Unknown interrupt exception";
+    interrupt_names[16] = "coprocessor fault";
+    interrupt_names[17] = "Alignment check exception";
+    interrupt_names[18] = "Machine check exception";
+    interrupt_names[19] = "Reserved";
+    interrupt_names[20] = "Reserved";
+    interrupt_names[21] = "Reserved";
+    interrupt_names[22] = "Reserved";
+    interrupt_names[23] = "Reserved";
+    interrupt_names[24] = "Reserved";
+    interrupt_names[25] = "Reserved";
+    interrupt_names[26] = "Reserved";
+    interrupt_names[27] = "Reserved";
+    interrupt_names[28] = "Reserved";
+    interrupt_names[29] = "Reserved";
+    interrupt_names[30] = "Reserved";
+    interrupt_names[31] = "Reserved";
 
-    IRQ_names[0] = "Programmable Interrupt Timer Interrupt";
-    IRQ_names[1] = "Keyboard Interrupt";
-    IRQ_names[2] = "Cascade (used internally by the two PICs. never raised)";
-    IRQ_names[3] = "COM2 (if enabled)";
-    IRQ_names[4] = "COM1 (if enabled)";
-    IRQ_names[5] = "LPT2 (if enabled)";
-    IRQ_names[6] = "Floppy Disk";
-    IRQ_names[7] = "LPT1 / Unreliable 'spurious' interrupt (usually)";
-    IRQ_names[8] = "CMOS real-time clock (if enabled)";
-    IRQ_names[9] = "Free for peripherals / legacy SCSI / NIC";
-    IRQ_names[10] = "Free for peripherals / SCSI / NIC";
-    IRQ_names[11] = "Free for peripherals / SCSI / NIC";
-    IRQ_names[12] = "PS2 Mouse";
-    IRQ_names[13] = "FPU / Coprocessor / Inter-processor";
-    IRQ_names[14] = "Primary ATA Hard Disk";
-    IRQ_names[15] = "Secondary ATA Hard Disk";
+    interrupt_names[32] = "Programmable Interrupt Timer Interrupt";
+    interrupt_names[33] = "Keyboard Interrupt";
+    interrupt_names[34] = "Cascade (used internally by the two PICs. never raised)";
+    interrupt_names[35] = "COM2 (if enabled)";
+    interrupt_names[36] = "COM1 (if enabled)";
+    interrupt_names[37] = "LPT2 (if enabled)";
+    interrupt_names[38] = "Floppy Disk";
+    interrupt_names[39] = "LPT1 / Unreliable 'spurious' interrupt (usually)";
+    interrupt_names[40] = "CMOS real-time clock (if enabled)";
+    interrupt_names[41] = "Free for peripherals / legacy SCSI / NIC";
+    interrupt_names[42] = "Free for peripherals / SCSI / NIC";
+    interrupt_names[43] = "Free for peripherals / SCSI / NIC";
+    interrupt_names[44] = "PS2 Mouse";
+    interrupt_names[45] = "FPU / Coprocessor / Inter-processor";
+    interrupt_names[46] = "Primary ATA Hard Disk";
+    interrupt_names[47] = "Secondary ATA Hard Disk";
+
+    interrupt_names[0x80] = "System call";
 }
 
 /**
@@ -109,7 +111,7 @@ void isr_handler(registers_t regs) {
     putstr("received interrupt ");
     putnbr(regs.int_no);
     putstr(" : ");
-    putstr(exception_messages[regs.int_no]);
+    putstr(interrupt_names[regs.int_no]);
     putchar('\n');
 
     if (regs.err_code) {
@@ -121,14 +123,14 @@ void isr_handler(registers_t regs) {
 
 
 /**
- * 
+ * only receives interrupts 32 to 47 (0x20 to 0x2F)
  */
 void irq_handler(registers_t regs) {
     /*
     putstr("Received IRQ ");
     putnbr(regs.int_no);
     putstr(" : ");
-    putstr(IRQ_names[regs.int_no - 32]);
+    putstr(interrupt_names[regs.int_no]);
     putstr("\n");
     */
 

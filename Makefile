@@ -39,7 +39,7 @@ run: os.img
 	qemu-system-i386 ${QFLAGS} ${OUT}/os.img
 
 debug: os.img kernel.elf
-	qemu-system-i386 -s ${QFLAGS} ${OUT}/os.img &
+	qemu-system-i386 -s -S ${QFLAGS} ${OUT}/os.img &
 	${GDB} -ex "target remote localhost:1234" -ex "symbol-file ${OUT}/kernel.elf"
 
 os.img: ${BOOT}/boot.bin kernel.bin
@@ -55,7 +55,6 @@ kernel.elf: ${BOOT}/kernel_entry.o ${OBJ}
 	${CC} ${CFLAGS} -ffreestanding -c $< -o $@
 
 %.o: %.s
-	@echo $@
 	nasm $< -f elf -o $@
 
 %.bin: %.s

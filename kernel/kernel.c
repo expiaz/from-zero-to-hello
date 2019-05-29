@@ -18,7 +18,7 @@ void main() {
     set_idt();
     putstr("IDT loaded\n");
 
-    //init_PIT(50);
+    init_PIT(0);
     init_keyboard();
 
     // int a = 4 / 0;
