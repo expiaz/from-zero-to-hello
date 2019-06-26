@@ -48,13 +48,19 @@ load_kernel:
 ; mov si, MSG_LOAD_KERNEL
 ; call print_string
 
+; Parameters
+; BX = buffer pointer
+; DL = drive number
+; AH = offset of sector
+; AL = number of sectors
 mov bx, KERNEL_ADDR		; address to load kernel
-mov dh, 16				; load first 15 sectors (w/o boot sector)
+mov al, 16				; load first 15 sectors (w/o boot sector)
+mov ah, 2				; from second sector
 mov dl, [BOOT_DRIVE]	; from the boot disk
 call disk_load
 
 ; -------------- switching to protected mode
-cli						; We must switch of interrupts until we have
+cli						; We must switch off interrupts until we have
                         ; set-up the protected mode interrupt vector
                         ; otherwise interrupts will run riot.
 lgdt [gdt_descriptor]   ; Load our global descriptor table , which defines
@@ -100,10 +106,8 @@ jmp $				; hang forever
 
 %include "a20.s"
 %include "gdt.s"
-%include "print_string.s"
-; %include "print_hex.s"
-%include "disk_load.s"
-%include "putstr.s"
+%include "disk.s"
+%include "strings.s"
 
 ; Global variables
 KERNEL_ADDR		equ 0x1000 	; kernel will be loaded at ES:0x1000
@@ -120,7 +124,7 @@ KERNEL_ADDR		equ 0x1000 	; kernel will be loaded at ES:0x1000
 							; to have more room (638 KiB free)
 BOOT_DRIVE			db 0
 MSG_REAL_MODE 		db "16 bit Real Mode", 13, 10, 0
-MSG_PROTECTED_MODE 	db "32 bit Protected Mode", 0
+MSG_PROTECTED_MODE 	db "32 bit Protected Mode", 13, 10, 0
 MSG_A20_FAILED		db "Can't enable A20", 13, 10, 0
 
 ; Bootsector padding (first 510 bytes)

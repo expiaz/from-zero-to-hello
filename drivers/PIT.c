@@ -1,4 +1,4 @@
-#include "PIT.h"
+#include "./PIT.h"
 
 /*
 The PIT has an internal clock which oscillates at approximately 1.1931MHz. This clock signal is fed through a frequency divider, to modulate the final output frequency. It has 3 channels, each with it's own frequency divider.
@@ -48,14 +48,14 @@ and 0x43 is the command port.
 u32 tick = 0;
 
 // IRQ handler for IRQ0
-static void PIT_handler(registers_t regs) {
+void PIT_handler(registers_t regs) {
    tick++;
    putstr("Tick: ");
    putnbr(tick);
    putstr("\n");
 }
 
-void init_PIT(u32 frequency) {
+void PIT_init(u32 frequency) {
    // Firstly, register our timer callback.
    register_interrupt_handler(IRQ0, &PIT_handler);
 

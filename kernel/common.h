@@ -16,7 +16,7 @@ void outb(u16 port, u8 data);
 u16 inw(u16 port);
 void outw(u16 port, u16 data);
 
-void memcpy(s8 *src, s8 *dest, s32 bytes);
-void memset(s8 *src, u8 value, int size);
+void memcpy(u8 *src, u8 *dest, s32 bytes);
+void memset(u8 *src, u8 value, int size);
 
 #endif

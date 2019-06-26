@@ -1,4 +1,4 @@
-#include "screen.h"
+#include "./screen.h"
 #include "../kernel/common.h"
 
 int     cursor_x;
@@ -9,7 +9,7 @@ u16      attribute;
 void    move_cursor();
 void    scroll();
 
-void    init_screen(int x, int y, text_color foreground, text_color background) {
+void    screen_init(int x, int y, text_color foreground, text_color background) {
     cursor_x = 0;
     cursor_y = 0;
     video_memory = (u16 *) VIDEO_ADDRESS;

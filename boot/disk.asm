@@ -7,13 +7,19 @@
 ;parameters (from wikipedia):
 ;https://en.wikipedia.org/wiki/INT_13H
 
+; Parameters
+; BX = buffer pointer
+; DL = drive number
+; AH = offset of sector
+; AL = number of sectors
+
 ;DL = drive number (0x00 = 1st floppy or A:)
 ;AH = function (0x02 = read sectors from drive)
 
 ;For AH = 0x02 expected parameters :
-;- AL = Sectors to read (passed from caller in DH)
+;- AL = number of sectors to read (passed from caller in AL)
 ;- CH = cylinder
-;- CL = sector
+;- CL = index of sector to read from (passed from caller in AH)
 ;- DH = head
 ;- DL = drive (passed from caller in DL)
 ;- ES:BX = buffer address pointer (/!\ BX + AL * 512 <= 0x10000)
@@ -37,11 +43,11 @@
 ;at address 0x1000.
 ;0x1000 + 16 * 512 = 0x3000
 
-disk_load:
-    mov [REMAINING_SECTORS], dh ; number of sectors to read stored in global
+read_disk:
+    mov [REMAINING_SECTORS], al ; number of sectors to read stored in global
     mov ch, 0x00                ; Select cylinder 0
     mov dh, 0x00                ; Select head 0
-    mov cl, 0x02                ; Start reading from second sector ( i.e. after the boot sector )
+    mov cl, ah                  ; Start reading from sector number in AH
 
 .next_group:
     mov di, 5   ; counter of tries
@@ -54,7 +60,8 @@ disk_load:
     jc .maybe_retry             ; if carry set then error so retry
     sub [REMAINING_SECTORS], al ; otherwise sub the read sectors from the total
     jz .done
-    mov cl, 0x01    ; always sector 1
+    mov cl, 0x01    ; TODO WHY always sector 1 ? bc we change head/cylinder?
+    ; TODO useless ? never inc dh so itll block at 1 bc 1^1 = 0
     xor dh, 1       ; next head on diskette
     jnz .next_group
     inc ch          ; next cylinder
@@ -62,10 +69,11 @@ disk_load:
 
 .maybe_retry:
     xor bh, bh
-    mov bh, ah      ; ah = error code, dl = disk drive where error from
+    mov bh, ah      ; isolate error code in bn
+                    ; ah = error code, dl = disk drive where error from
 
     mov si, RETRY_MSG
-    call print_string
+    call putstr_16
 
     mov ah, 0x00    ; reset disk function
     int 0x13
@@ -78,16 +86,30 @@ disk_load:
 
 .disk_error:
     mov si, DISK_ERROR_MSG
-    call print_string
+    call putstr_16
 
-    ; mov dh, bh      ; ah = error code, dl = disk drive where error from
-    ; call print_hex
+    xor dx, dx
+    mov dh, bh      ; bh = saved error code from routine 0x02
+    call puthex_16
     
+    mov si, LN
+    call putstr_16
+
+    mov si, DISK_RESET_MSG
+    call putstr_16
+
+    xor dx, dx
+    mov dh, ah      ; error code from routine 0x00
+    call puthex_16
+
     jmp $
 
 REMAINING_SECTORS       db 0
-DISK_ERROR_MSG          db "Disk read error", 0
-RETRY_MSG               db "retry ", 0
+DISK_ERROR_MSG          db "Disk read error : ", 0
+DISK_RESET_MSG          db "Disk reset error : ", 0
+DISK_NUMBER_MSG         db "on disk ", 0
+LN                      db 13, 10, 0
+RETRY_MSG               db "Resetting disk ... ", 0
 
 ; load DH sectors to ES:BX from drive DL
 ;_disk_load:

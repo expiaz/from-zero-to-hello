@@ -1,4 +1,4 @@
-#include "isr.h"
+#include "./ISR.h"
 
 char *interrupt_names[256]; /* = {
         "Division by zero exception",
@@ -44,8 +44,8 @@ void register_interrupt_handler(u8 number, isr_t handler) {
   interrupt_handlers[number] = handler;
 }
 
-void set_isr() {
-    memset((char *) &interrupt_handlers, 0, 256 * sizeof(isr_t));
+void ISR_init() {
+    memset((u8 *) &interrupt_handlers, 0, 256 * sizeof(isr_t));
 
     interrupt_names[0] = "Division by zero exception";
     interrupt_names[1] = "Debug exception";
@@ -140,9 +140,9 @@ void irq_handler(registers_t regs) {
     }
     // EOI
     // Send reset signal to master
-    outb(PIC1_COMMAND, PIC_EOI);
+    outb(REG_PIC1_CTRL, PIC_EOI);
     // sent by slave PIC
     if (regs.int_no >= 0x28) {
-        outb(PIC2_COMMAND, PIC_EOI);
+        outb(REG_PIC2_CTRL, PIC_EOI);
     }
 }

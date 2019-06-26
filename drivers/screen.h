@@ -1,4 +1,3 @@
-
 #ifndef SCREEN_H
 #define SCREEN_H
 
@@ -20,7 +19,7 @@ typedef enum text_color_e {
 #define REG_SCREEN_CTRL 0x3D4
 #define REG_SCREEN_DATA 0x3D5
 
-void    init_screen(int x, int y, text_color foreground, text_color background);
+void    screen_init(int x, int y, text_color foreground, text_color background);
 
 void    putchar(char c);
 void    putstr(char *s);

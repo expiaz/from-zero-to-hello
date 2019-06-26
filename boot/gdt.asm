@@ -6,6 +6,7 @@ gdt_start:
 gdt_null:           ; the mandatory null descriptor
     dd 0x0         ; ’dd ’ means define double word ( i.e. 4 bytes )
     dd 0x0
+
 gdt_code:           ; the code segment descriptor
                     ; base = 0x000000 , limit = 0xffffff
 

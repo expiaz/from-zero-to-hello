@@ -1,8 +1,8 @@
 #ifndef IDT_H
 #define IDT_H
 
-#include "common.h"
-#include "isr.h"
+#include "./common.h"
+#include "./ISR.h"
 #include "../drivers/PIC.h"
 
 typedef struct {
@@ -55,6 +55,6 @@ typedef struct {
 idt_entry_t idt[IDT_ENTRIES];
 idt_register_t idt_reg;
 
-void set_idt();
+void IDT_init();
 
 #endif // IDT_H

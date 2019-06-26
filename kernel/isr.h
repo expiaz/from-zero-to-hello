@@ -1,7 +1,7 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include "common.h"
+#include "./common.h"
 #include "../drivers/screen.h"
 #include "../drivers/PIC.h"
 
@@ -95,6 +95,6 @@ void register_interrupt_handler(u8 number, isr_t handler);
 
 // setup exception messages
 // must be setup manually because global init won't work
-void set_isr();
+void ISR_init();
 
 #endif // ISR_H

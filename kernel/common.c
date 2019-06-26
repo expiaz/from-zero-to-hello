@@ -1,4 +1,4 @@
-#include "common.h"
+#include "./common.h"
 
 /**
  * read a byte from a port
@@ -8,7 +8,7 @@
 u8 inb(u16 port) {
     // =a (result) means put AL register in variable result after
     // d (port) means load EDX with variable port before
-    u8 result;
+    volatile u8 result;
     __asm__("in %%dx, %%al" : "=a" (result) : "d" (port));
     return result;
 }
@@ -28,7 +28,7 @@ void outb(u16 port, u8 data) {
  * @return {u16} the 16 bits
  */
 u16 inw(u16 port) {
-    u16 result;
+    volatile u16 result;
     __asm__("in %%dx, %%ax" : "=a" (result) : "d" (port));
     return result;
 }
@@ -45,7 +45,7 @@ void outw(u16 port, u16 data) {
 /**
  * copy a chunk of memory to another location
  */
-void memcpy(s8 *src, s8 *dest, int bytes) {
+void memcpy(u8 *src, u8 *dest, int bytes) {
     int i;
 
     i = 0;
@@ -55,7 +55,7 @@ void memcpy(s8 *src, s8 *dest, int bytes) {
     }
 }
 
-void memset(s8 *src, u8 value, int size) {
+void memset(u8 *src, u8 value, int size) {
     int i = 0;
     while (i < size) src[i++] = value;
 }

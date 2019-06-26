@@ -24,11 +24,14 @@ BOOT = boot
 OUT = out
 DRIVER = drivers
 
+KERNEL_ADDR		= 0x8E00
+STAGE_2_ADDR	= 0x500
+
 OBJ = ${C_SOURCES:.c=.o kernel/interrupt.o}
 
 CC = /usr/local/i386elfgcc/bin/i386-elf-gcc
 LD = /usr/local/i386elfgcc/bin/i386-elf-ld
-GDB = /usr/local/i386elfgcc/bin/i386-elf-gdb
+GDB = /usr/local/i386elfgcc/bin/i386-elf-gd
 
 CFLAGS = -g
 QFLAGS = -fda #use -hda for hard drive image of size >= 3kb
@@ -54,10 +57,10 @@ kernel.elf: ${BOOT}/kernel_entry.o ${OBJ}
 %.o: %.c ${HEADERS}
 	${CC} ${CFLAGS} -ffreestanding -c $< -o $@
 
-%.o: %.s
+%.o: %.asm
 	nasm $< -f elf -o $@
 
-%.bin: %.s
+%.bin: %.asm
 	nasm $< -f bin -I 'boot/' -o $@
 
 clean:
