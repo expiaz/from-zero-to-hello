@@ -27,6 +27,21 @@ void *vaddr_tr(void * vaddr) {
     u8 *page = (u8 *) (pte & ~0xFFF);
     void *addr = (void *) page[(u32) vaddr & 0xFFF];
 
+    /*
+        higher half kernel ?
+        the page directory of the kernel is on the upper bounds of
+        the memory
+        as we are in 32bits, it means 4GB
+
+        memory map fo the upper 4GB
+        |---------------|---------------|-----------|-----------------------------------------------|
+        | start         | end			| size		| type											|
+        |---------------|---------------|-----------|---------------------------------------------	|
+        | 0xFFC00000	| 0xFFFFEFFF	| 4 MiB     | page table (1024 entries of 1024 entries)     |
+        | 0xFFFFF000	| 0xFFFFFFFF	| 4 KiB		| page directory (1024 entries of 4B)			|
+        |-------------|---------------|-------------|-----------------------------------------------|
+    */
+
     // mapping is done on the higher addresses
     // PD is at 0xFFFFF000 - 0xFFFFFFFF (0x1000 or 4096 bytes)
     // i.e 1024 entries (1024 = 2^10 => 10 bits in vaddr)

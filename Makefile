@@ -45,14 +45,14 @@ debug: os.img kernel.elf
 	qemu-system-i386 -s -S ${QFLAGS} ${OUT}/os.img &
 	${GDB} -ex "target remote localhost:1234" -ex "symbol-file ${OUT}/kernel.elf"
 
-os.img: ${BOOT}/boot.bin kernel.bin
+os.img: ${BOOT}/stage1.bin kernel.bin
 	cat $^ > ${OUT}/$@
 
 kernel.bin: ${BOOT}/kernel_entry.o ${OBJ}
-	${LD} -o $@ -Ttext 0x1000 $^ --oformat binary
+	${LD} -o $@ -Ttext ${KERNEL_ADDR} $^ --oformat binary
 
 kernel.elf: ${BOOT}/kernel_entry.o ${OBJ}
-	${LD} -o ${OUT}/$@ -Ttext 0x1000 $^
+	${LD} -o ${OUT}/$@ -Ttext ${KERNEL_ADDR} $^
 
 %.o: %.c ${HEADERS}
 	${CC} ${CFLAGS} -ffreestanding -c $< -o $@

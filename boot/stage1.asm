@@ -66,7 +66,7 @@ load_stage_2:
 	mov si, MSG_OK
 	call putstr_16
 
-	mov dl, [BOOT_DRIVE]    ; gives stage 2 bios informations
+	mov dl, [BOOT_DRIVE]    ; gives stage 2 bios information
 	call STAGE_2_ADDR	    ; jump to the stage 2
 
 	jmp $				    ; hang forever
@@ -79,10 +79,13 @@ MSG_STAGE_1 		db "Bootloader stage 1  ", 0
 MSG_LOAD_STAGE_2    db "Loading stage 2     ", 0
 MSG_OK              db "[OK]", 13, 10, 0
 
-%include "disk.s"
-%include "strings.s"
+%include "disk.asm"
+%include "strings.asm"
 
 ; Bootsector padding (first 510 bytes)
 times 510-($-$$) db 0
 ; magic number for bootable drive
 dw 0xaa55
+
+; append the second stage after the boot sector
+%include "stage2.asm"

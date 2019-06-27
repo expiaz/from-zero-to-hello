@@ -1,51 +1,52 @@
 personnal project OS from scratch
-
-DONE - leagcy bootloader
-TODO - Multiboot header
-TODO - retrieve BIOS structure
-TODO - stage1
-DONE   - setup segments
-DONE   - disk load stage2
-TODO - stage2
-DONE   - A20
-TODO   - memory map
-DONE   - GDT
-DONE   - Protected Mode
-DONE   - Kernel entry ASM
-DONE   - Kernel jump C 32 bits
-DONE - screen driver
-DONE - IDT
-TODO - NMI / spurious IRQs
-DONE - remap PIC
-DONE - ISR 0x0 - 0x20
-DONE - IRQ 0x20 - 0x2f
-DONE - keyboard driver
-DONE - PIT
-TODO - VMM
-       - ID mapping
-       - kernel pages high half
-       - dynamic pages processes
-TODO - scheduler
-TODO - filesystem
-       - SATA driver
-       - FAT/NTFS
-TODO - usermode
-TODO - syscalls
-       - common handler
-       - ABI
-TODO - network
-TODO   - NIC/PCI driver
-       - network card driver (rtl18139)
-TODO   - TCP/IP stack
-         - Ethernet
-         - ARP
-         - ICMP
-         - IP
-         - TCP
-         - UDP? (DNS)
-         - HTTP?
-TODO - userland
-TODO - multicore
-TODO - shell
-TODO - API / ELF
-TODO - GUI
+| status             | task                             |
+| ------------------ | -------------------------------- |
+| :heavy_check_mark: | legacy bootloader                |
+| :x:                | Multiboot header                 |
+| :x:                | retrieve BIOS structure          |
+| :x:                | stage1                           |
+| :heavy_check_mark: | * setup segments                 |
+| :heavy_check_mark: | * disk load stage2               |
+| :x:                | stage2                           |
+| :heavy_check_mark: | * A20                            |
+| :x:                | * memory map                     |
+| :heavy_check_mark: | * GDT                            |
+| :heavy_check_mark: | * Protected Mode                 |
+| :heavy_check_mark: | * Kernel entry ASM               |
+| :heavy_check_mark: | * Kernel jump C 32 bits          |
+| :heavy_check_mark: | screen driver                    |
+| :heavy_check_mark: | IDT                              |
+| :x:                | NMI / spurious IRQs              |
+| :heavy_check_mark: | remap PIC                        |
+| :heavy_check_mark: | ISR 0x0 - 0x20                   |
+| :heavy_check_mark: | IRQ 0x20 - 0x2f                  |
+| :heavy_check_mark: | keyboard driver                  |
+| :heavy_check_mark: | PIT                              |
+| :x:                | VMM                              |
+| :x:                | * ID mapping                     |
+| :x:                | * kernel pages high half         |
+| :x:                | * dynamic pages processes        |
+| :x:                | scheduler                        |
+| :x:                | filesystem                       |
+| :x:                | * SATA driver                    |
+| :x:                | * FAT/NTFS                       |
+| :x:                | usermode                         |
+| :x:                | syscalls                         |
+| :x:                | common handler                   |
+| :x:                | * ABI                            |
+| :x:                | * network                        |
+| :x:                | * NIC/PCI driver                 |
+| :x:                | * network card driver (rtl18139) |
+| :x:                | * TCP/IP stack                   |
+| :x:                | * Ethernet                       |
+| :x:                | * ARP                            |
+| :x:                | * ICMP                           |
+| :x:                | * IP                             |
+| :x:                | * TCP                            |
+| :x:                | * UDP? (DNS)                     |
+| :x:                | * HTTP?                          |
+| :x:                | userland                         |
+| :x:                | multicore                        |
+| :x:                | shell                            |
+| :x:                | API / ELF                        |
+| :x:                | GUI                              |

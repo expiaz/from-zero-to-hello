@@ -112,8 +112,6 @@ MSG_LN              db 13, 10, 0
 %include "a20.s"
 %include "memory.s"
 %include "gdt.s"
-%include "disk.s"
-%include "strings.s"
 
 ; Stage 2 padding (2 sectors)
 times 1024-($-$$) db 0
