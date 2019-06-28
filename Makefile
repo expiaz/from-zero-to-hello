@@ -26,12 +26,13 @@ DRIVER = drivers
 
 KERNEL_ADDR		= 0x8E00
 STAGE_2_ADDR	= 0x500
+STAGE_1_ADDR	= 0x7C00
 
 OBJ = ${C_SOURCES:.c=.o kernel/interrupt.o}
 
 CC = /usr/local/i386elfgcc/bin/i386-elf-gcc
 LD = /usr/local/i386elfgcc/bin/i386-elf-ld
-GDB = /usr/local/i386elfgcc/bin/i386-elf-gd
+GDB = /usr/local/i386elfgcc/bin/i386-elf-gdb
 
 CFLAGS = -g
 QFLAGS = -fda #use -hda for hard drive image of size >= 3kb
@@ -43,9 +44,14 @@ run: os.img
 
 debug: os.img kernel.elf
 	qemu-system-i386 -s -S ${QFLAGS} ${OUT}/os.img &
-	${GDB} -ex "target remote localhost:1234" -ex "symbol-file ${OUT}/kernel.elf"
+	${GDB}  -ex "target remote localhost:1234" \
+	        -ex "set architecture i8086" \
+			-ex "set disassembly-flavor intel" \
+			-ex "symbol-file ${OUT}/kernel.elf" \
+			-ex "break *0x500" \
+			-ex 'x/4i $eip'
 
-os.img: ${BOOT}/stage1.bin kernel.bin
+os.img: boot/stage1.bin boot/stage2.bin kernel.bin
 	cat $^ > ${OUT}/$@
 
 kernel.bin: ${BOOT}/kernel_entry.o ${OBJ}

@@ -9,8 +9,6 @@ void dummy() {
 }
 
 void main() {
-    //clear();
-    //set_color(RED, BLACK);
     screen_init(0, 0, WHITE, BLACK);
     clear();
     putstr("Kernel boostraped\n");
@@ -18,7 +16,7 @@ void main() {
     IDT_init();
     putstr("IDT loaded\n");
 
-    PIT_init(0);
+    //PIT_init(100);
     init_keyboard();
     
     // VMM_init

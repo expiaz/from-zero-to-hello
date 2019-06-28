@@ -44,9 +44,13 @@ void keyboard_handler(registers_t regs) {
     //putchar(scan_code);
     if (scancode & 0x80); // key release
     else {
+        putnbr(scancode);
+        putstr(" : ");
         // key down
         char c = keyboard_US[scancode];
         if (c) putchar(c);
+
+        putstr("\n");
     }
 }
 

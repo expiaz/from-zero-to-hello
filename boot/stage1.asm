@@ -75,8 +75,8 @@ load_stage_2:
 STAGE_2_ADDR        equ 0x0500
 
 BOOT_DRIVE			db 0
-MSG_STAGE_1 		db "Bootloader stage 1  ", 0
-MSG_LOAD_STAGE_2    db "Loading stage 2     ", 0
+MSG_STAGE_1 		db "Bootloader stage 1      [OK]", 13, 10, 0
+MSG_LOAD_STAGE_2    db "Loading stage 2         ", 0
 MSG_OK              db "[OK]", 13, 10, 0
 
 %include "disk.asm"
@@ -86,6 +86,3 @@ MSG_OK              db "[OK]", 13, 10, 0
 times 510-($-$$) db 0
 ; magic number for bootable drive
 dw 0xaa55
-
-; append the second stage after the boot sector
-%include "stage2.asm"

@@ -109,3 +109,19 @@ putstr_32:
 .done:
 	popa
 	ret 					; Return from the function
+
+clear_screen_32:
+    pusha
+    mov edx, VIDEO_MEMORY
+    mov al, ' '
+    mov ah, WHITE_ON_BLACK
+    mov ecx, 80*25
+
+.loop:
+    mov [edx], ax
+    add edx, 2
+    dec ecx
+    jnz .loop
+
+    popa
+    ret

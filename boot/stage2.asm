@@ -52,6 +52,9 @@ load_kernel:
     mov dl, [BOOT_DRIVE]	; from the boot disk
     call read_disk
 
+    mov si, MSG_OK
+    call putstr_16
+
 ; -------------- switching to protected mode
 switch_pm:
     cli						; We must switch off interrupts until we have
@@ -82,6 +85,8 @@ pm:
     mov ebp, 0x8DFF 	; Update our stack position with 0x0 stack segment
     mov esp, ebp
 
+    call clear_screen_32
+
     mov esi, MSG_PROTECTED_MODE
     call putstr_32
 
@@ -99,19 +104,21 @@ pm:
 KERNEL_ADDR		equ 0x8E00 	; kernel will be loaded at ES:0x8E00
 							; ES is 0x0, and 0x8E00 land in between the
 BOOT_DRIVE			db 0
-MSG_STAGE_2 		db "Bootloader stage 2      ", 0
-MSG_LOAD_STAGE_2    db "Loading kernel          ", 0
+MSG_STAGE_2 		db "Bootloader stage 2      [OK]", 13, 10, 0
+MSG_LOAD_KERNEL     db "Loading kernel          ", 0
 MSG_A20             db "Enabling A20            ", 0
 
-MSG_PROTECTED_MODE 	db "32 bit Protected Mode", 13, 10, 0
+MSG_PROTECTED_MODE 	db "32 bits Protected Mode  [OK]", 13, 10, 0
 
 MSG_OK              db "[OK]", 13, 10, 0
 MSG_ERR             db "[ERR]", 13, 10, 0
 MSG_LN              db 13, 10, 0
 
-%include "a20.s"
-%include "memory.s"
-%include "gdt.s"
+%include "disk.asm"
+%include "a20.asm"
+%include "memory.asm"
+%include "gdt.asm"
+%include "strings.asm"
 
 ; Stage 2 padding (2 sectors)
 times 1024-($-$$) db 0
