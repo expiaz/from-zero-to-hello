@@ -1,4 +1,4 @@
-#include "./PIT.h"
+#include "PIT.h"
 
 /*
 The PIT has an internal clock which oscillates at approximately 1.1931MHz. This clock signal is fed through a frequency divider, to modulate the final output frequency. It has 3 channels, each with it's own frequency divider.

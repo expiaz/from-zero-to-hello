@@ -1,5 +1,5 @@
 
-#include "./IDT.h"
+#include "IDT.h"
 
 void IDT_set_entry(int isr_number, u32 handler) {
     idt[isr_number].base_low = handler & 0xFFFF;

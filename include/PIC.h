@@ -1,7 +1,7 @@
 #ifndef PIC_H
 #define PIC_H
 
-#include "../kernel/common.h"
+#include "common.h"
 
 #define REG_PIC1 0x20 /* IO base address for master PIC */
 #define REG_PIC2 0xA0 /* IO base address for slave PIC */

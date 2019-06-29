@@ -1,4 +1,4 @@
-#include "./common.h"
+#include "common.h"
 
 /**
  * read a byte from a port

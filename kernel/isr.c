@@ -1,4 +1,4 @@
-#include "./ISR.h"
+#include "ISR.h"
 
 char *interrupt_names[256]; /* = {
         "Division by zero exception",

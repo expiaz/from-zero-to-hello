@@ -1,5 +1,5 @@
-#include "./screen.h"
-#include "../kernel/common.h"
+#include "screen.h"
+#include "common.h"
 
 int     cursor_x;
 int     cursor_y;

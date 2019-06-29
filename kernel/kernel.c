@@ -1,12 +1,8 @@
-#include "../drivers/screen.h"
-#include "../drivers/keyboard.h"
-#include "./common.h"
-#include "./IDT.h"
-#include "../drivers/PIT.h"
-
-void dummy() {
-    // kernel code isn't first instruction anymore
-}
+#include "screen.h"
+#include "keyboard.h"
+#include "common.h"
+#include "IDT.h"
+#include "PIT.h"
 
 void main() {
     screen_init(0, 0, WHITE, BLACK);

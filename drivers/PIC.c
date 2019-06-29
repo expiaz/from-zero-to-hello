@@ -1,4 +1,4 @@
-#include "./PIC.h"
+#include "PIC.h"
 
 void PIC_remap(u8 master_offset, u8 slave_offset) {
     u8 master_mask; // 10111000 0xb8

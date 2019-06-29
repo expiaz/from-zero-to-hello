@@ -1,9 +1,9 @@
 #ifndef IDT_H
 #define IDT_H
 
-#include "./common.h"
-#include "./ISR.h"
-#include "../drivers/PIC.h"
+#include "common.h"
+#include "ISR.h"
+#include "PIC.h"
 
 typedef struct {
     /**

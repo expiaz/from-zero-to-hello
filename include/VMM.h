@@ -1,7 +1,7 @@
 #ifndef VMM_H
 #define VMM_H
 
-#include "./common.h"
+#include "common.h"
 
 #endif // VMM_H
 

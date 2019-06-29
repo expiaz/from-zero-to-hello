@@ -1,9 +1,9 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include "./common.h"
-#include "../drivers/screen.h"
-#include "../drivers/PIC.h"
+#include "common.h"
+#include "screen.h"
+#include "PIC.h"
 
 // CPU exceptions
 // @see kernel/interrupt.s

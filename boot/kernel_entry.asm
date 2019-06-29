@@ -5,6 +5,9 @@
 ; before our first line of code
 [bits 32]
 [extern main]
+; entry point for GNU linker
+[global _start]
 
-call main
-jmp $
+_start:
+    call main
+    jmp $

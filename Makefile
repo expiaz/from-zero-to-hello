@@ -16,59 +16,65 @@
 
 # qemu mouse => crtl+alt+g
 
-C_SOURCES = $(wildcard kernel/*.c drivers/*.c)
-HEADERS = $(wildcard kernel/*.h drivers/*.h)
 
-KERNEL = kernel
-BOOT = boot
-OUT = out
-DRIVER = drivers
+C_SOURCES		= $(wildcard kernel/*.c drivers/*.c)
+ASM_SOURCES		= $(wildcard kernel/*.asm drivers/*.asm)
 
 KERNEL_ADDR		= 0x8E00
-STAGE_2_ADDR	= 0x500
+STAGE_2_ADDR	= 0x0500
 STAGE_1_ADDR	= 0x7C00
 
-OBJ = ${C_SOURCES:.c=.o kernel/interrupt.o}
+OUT_DIR			= out
+BOOT_DIR		= boot
 
-CC = /usr/local/i386elfgcc/bin/i386-elf-gcc
-LD = /usr/local/i386elfgcc/bin/i386-elf-ld
-GDB = /usr/local/i386elfgcc/bin/i386-elf-gdb
+OBJ 			= $(C_SOURCES:.c=.o) $(ASM_SOURCES:.asm=.o)
 
-CFLAGS = -g
+CC				= /usr/local/i386elfgcc/bin/i386-elf-gcc
+LD				= /usr/local/i386elfgcc/bin/i386-elf-ld
+GDB				= /usr/local/i386elfgcc/bin/i386-elf-gdb
+
+CFLAGS = -g -I include
 QFLAGS = -fda #use -hda for hard drive image of size >= 3kb
 
 all: os.img
 
 run: os.img
-	qemu-system-i386 ${QFLAGS} ${OUT}/os.img
+	qemu-system-i386 -drive format=raw,file=$(OUT_DIR)/os.img
 
 debug: os.img kernel.elf
-	qemu-system-i386 -s -S ${QFLAGS} ${OUT}/os.img &
-	${GDB}  -ex "target remote localhost:1234" \
+	qemu-system-i386 -s -S $(QFLAGS) $(OUT_DIR)/os.img &
+	$(GDB)  -ex "target remote localhost:1234" \
 	        -ex "set architecture i8086" \
 			-ex "set disassembly-flavor intel" \
-			-ex "symbol-file ${OUT}/kernel.elf" \
-			-ex "break *0x500" \
-			-ex 'x/4i $eip'
+			-ex "symbol-file $(OUT_DIR)/kernel.elf"
 
-os.img: boot/stage1.bin boot/stage2.bin kernel.bin
-	cat $^ > ${OUT}/$@
+# concatenation of bootloader and kernel
+os.img: $(BOOT_DIR)/stage1.bin $(BOOT_DIR)/stage2.bin kernel.bin
+	cat $(addprefix $(OUT_DIR)/,$(notdir $^)) > $(OUT_DIR)/$@
 
-kernel.bin: ${BOOT}/kernel_entry.o ${OBJ}
-	${LD} -o $@ -Ttext ${KERNEL_ADDR} $^ --oformat binary
+# compiled version of kernel
+kernel.bin: $(BOOT_DIR)/kernel_entry.o $(OBJ)
+	$(LD) -o $(OUT_DIR)/$@ -Ttext $(KERNEL_ADDR) \
+	$(addprefix $(OUT_DIR)/,$(notdir $^)) --oformat binary
 
-kernel.elf: ${BOOT}/kernel_entry.o ${OBJ}
-	${LD} -o ${OUT}/$@ -Ttext ${KERNEL_ADDR} $^
+# symbol version of kernel for debugging
+kernel.elf: $(BOOT_DIR)/kernel_entry.o $(OBJ)
+	$(LD) -o $(OUT_DIR)/$@ -Ttext $(KERNEL_ADDR) \
+	$(addprefix $(OUT_DIR)/,$(notdir $^))
 
-%.o: %.c ${HEADERS}
-	${CC} ${CFLAGS} -ffreestanding -c $< -o $@
+# c files compilation
+%.o: %.c
+	$(CC) $(CFLAGS) -ffreestanding -c $< -o $(OUT_DIR)/$(notdir $@)
 
+# assembly files for kernel linking
 %.o: %.asm
-	nasm $< -f elf -o $@
+	nasm $< -f elf -o $(OUT_DIR)/$(notdir $@)
 
+# assembly files for bootloader
 %.bin: %.asm
-	nasm $< -f bin -I 'boot/' -o $@
+	nasm $< -f bin -I boot -o $(OUT_DIR)/$(notdir $@)
 
 clean:
-	rm -rf *.bin *.dis *.o *.elf
-	rm -rf ${KERNEL}/*.o ${BOOT}/*.bin ${DRIVER}/*.o ${BOOT}/*.o
+	find . -type f -name '*.o' -delete
+	find . -type f -name '*.bin' -delete
+	rm out/*
